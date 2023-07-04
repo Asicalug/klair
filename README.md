@@ -1,4 +1,4 @@
-# Aero Bot
+# Klair Bot
 
 ### Getting started
 Create a `.env` File with following Content:
