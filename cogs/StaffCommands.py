@@ -79,7 +79,22 @@ class StaffCommands(commands.Cog):
         embed5 = discord.Embed(title="", description="Remember, the rules are applied to all the behaviour on the server including Moderators and Staffs. If you See anyone breaking the Rules, report it to any online Staff/Mod.", color=discord.Color.red())
         embed5.add_field(name="Rules", value="* 1. Be Respectful and dont be mean to others :D\n\n* 2. No Spamming\n\n* 3. No Advertising,\n\n* 4. No Threatening\n\n* 5. Dont share any personal information\n\n* 6. Be a good person :D")
         await ctx.send_response(embeds=(embed1, embed2, embed3, embed4, embed5))
-
+    
+    @embed.command(name="changelog", description="Sends a changelog embed")
+    @commands.has_permissions(manage_messages=True)
+    async def embedchangelog(
+        self,
+        ctx : discord.ApplicationContext,
+        message=None,
+    ):
+        embed = discord.Embed(title="Changelog", description=f"{message}")
+        await ctx.send_response("Changelog published !", ephemeral=True)
+        await ctx.send(embed=embed)
+        
+    #=================================
+    #============Errors===============
+    #================================= 
+    
     @embedrules.error
     async def embedrules_error(self, ctx: discord.ApplicationContext, error: commands.CommandError) -> None:
         PermissionMissing = discord.Embed(title='Error !', description="You don't have the required permissions to execute this command.", color=discord.Color.red())
@@ -88,10 +103,21 @@ class StaffCommands(commands.Cog):
         if isinstance(error, commands.errors.MissingPermissions):
             await ctx.send_response(embed=PermissionMissing, ephemeral=True)
 
-        
-    #=================================
-    #============Errors===============
-    #================================= 
-    
+    @setup_suggestions.error
+    async def embedrules_error(self, ctx: discord.ApplicationContext, error: commands.CommandError) -> None:
+        PermissionMissing = discord.Embed(title='Error !', description="You don't have the required permissions to execute this command.", color=discord.Color.red())
+        PermissionMissing.set_footer(text="If you think that this is an error please report it to an admin", icon_url="https://asicalug.netlify.app/storage/warning.png")
+
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=PermissionMissing, ephemeral=True)
+
+    @setup_tickets.error
+    async def embedrules_error(self, ctx: discord.ApplicationContext, error: commands.CommandError) -> None:
+        PermissionMissing = discord.Embed(title='Error !', description="You don't have the required permissions to execute this command.", color=discord.Color.red())
+        PermissionMissing.set_footer(text="If you think that this is an error please report it to an admin", icon_url="https://asicalug.netlify.app/storage/warning.png")
+
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=PermissionMissing, ephemeral=True)
+
 def setup(bot: commands.Bot):
     bot.add_cog(StaffCommands(bot))
