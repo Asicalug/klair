@@ -1,6 +1,6 @@
 import discord
 
-from discord.ext import commands
+from discord.ext import commands, has_permissions, MissingPermissions
 from discord.commands import SlashCommandGroup, Option, SlashCommand
 
 from views.NewSuggestionView import CreateSuggestion
@@ -16,6 +16,7 @@ class StaffCommands(commands.Cog):
     
 
     @setup.command(name="suggestions", description="Sets up Suggestions")
+    @commands.has_permissions(manage_channels=True)
     async def setup_suggestions(
         self,
         ctx: discord.ApplicationContext,
@@ -39,6 +40,7 @@ class StaffCommands(commands.Cog):
         await ctx.respond(embed=embed)
 
     @setup.command(name="tickets", description="Sets up Tickets")
+    @commands.has_permissions(manage_channels=True)
     async def setup_tickets(
         self,
         ctx: discord.ApplicationContext,
@@ -61,7 +63,14 @@ class StaffCommands(commands.Cog):
         embed.add_field(name="Ticket Category", value=ticket.mention)
         await ctx.respond(embed=embed)
 
+@setup_tickets.error
+async def kick_error(ctx, error):
+    if isinstance(error, MissingPermissions):
+        text = "Sorry {}, you do not have permissions to do that!".format(ctx.message.author)
+        await bot.send_message(ctx.message.channel, text)   
+
     @embed.command(name="rules", description="Sends Rules Embed")
+    @commands.has_permissions(manage_messages = True)
     async def embedrules(
         self,
         ctx: discord.ApplicationContext,

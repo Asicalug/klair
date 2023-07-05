@@ -6,13 +6,9 @@ class UserCommands(commands.Cog):
         self.bot = bot
         print(f"{self.__class__.__name__} loaded")
     
-    @commands.command()
-    async def ping(
-        self,
-        ctx : discord.ApplicationContext
-    ):
-        embed=discord.Embed(title='Pong !', description=f'My ping is {round(self.bot.latency * 1000)}ms')
-        await ctx.send(embed=embed)
+    @commands.slash_command()
+    async def ping(self, ctx: discord.ApplicationCommand):
+        await ctx.response.send_message(f"Pong! {round(self.bot.latency * 1000)}ms")
 
     
 def setup(bot: commands.Bot):

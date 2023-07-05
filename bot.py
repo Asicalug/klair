@@ -4,7 +4,8 @@ import inspect
 import os
 from itertools import cycle
 
-from discord.ext import commands, tasks
+
+from discord.ext import commands
 from dotenv import load_dotenv
 
 from utils.settings import Settings
@@ -26,10 +27,10 @@ bot.settings = Settings() # type: ignore
 for filename in os.listdir("./cogs"):
     if filename.endswith(".py"):
         bot.load_extension(f"cogs.{filename[:-3]}")
+        print("Loading Cogs")
 
 @bot.event
 async def on_message(message):
-    eta = 'eta'
     if message.content.lower()=="eta":
         await message.reply("There is currently no ETA. Please read <#1120369654653788302>")
 
