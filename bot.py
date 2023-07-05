@@ -27,7 +27,7 @@ bot.settings = Settings() # type: ignore
 for filename in os.listdir("./cogs"):
     if filename.endswith(".py"):
         bot.load_extension(f"cogs.{filename[:-3]}")
-        print("Loading Cogs")
+        print("Cog Loaded")
 
 @bot.event
 async def on_message(message):

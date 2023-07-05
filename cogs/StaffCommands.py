@@ -1,7 +1,8 @@
 import discord
 
-from discord.ext import commands, has_permissions, MissingPermissions
-from discord.commands import SlashCommandGroup, Option, SlashCommand
+from discord import Interaction
+from discord.ext import commands
+from discord.commands import SlashCommandGroup, Option
 
 from views.NewSuggestionView import CreateSuggestion
 from views.NewTicketView import CreateTicket
@@ -63,12 +64,6 @@ class StaffCommands(commands.Cog):
         embed.add_field(name="Ticket Category", value=ticket.mention)
         await ctx.respond(embed=embed)
 
-@setup_tickets.error
-async def kick_error(ctx, error):
-    if isinstance(error, MissingPermissions):
-        text = "Sorry {}, you do not have permissions to do that!".format(ctx.message.author)
-        await bot.send_message(ctx.message.channel, text)   
-
     @embed.command(name="rules", description="Sends Rules Embed")
     @commands.has_permissions(manage_messages = True)
     async def embedrules(
@@ -85,7 +80,18 @@ async def kick_error(ctx, error):
         embed5.add_field(name="Rules", value="* 1. Be Respectful and dont be mean to others :D\n\n* 2. No Spamming\n\n* 3. No Advertising,\n\n* 4. No Threatening\n\n* 5. Dont share any personal information\n\n* 6. Be a good person :D")
         await ctx.send_response(embeds=(embed1, embed2, embed3, embed4, embed5))
 
+    @embedrules.error
+    async def embedrules_error(self, ctx: discord.ApplicationContext, error: commands.CommandError) -> None:
+        PermissionMissing = discord.Embed(title='Error !', description="You don't have the required permissions to execute this command.", color=discord.Color.red())
+        PermissionMissing.set_footer(text="If you think that this is an error please report it to an admin", icon_url="https://asicalug.netlify.app/storage/warning.png")
+
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=PermissionMissing, ephemeral=True)
+
         
+    #=================================
+    #============Errors===============
+    #================================= 
     
 def setup(bot: commands.Bot):
     bot.add_cog(StaffCommands(bot))
