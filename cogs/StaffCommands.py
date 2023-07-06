@@ -4,8 +4,13 @@ from discord import Interaction
 from discord.ext import commands
 from discord.commands import SlashCommandGroup, Option
 
+from modals.EmbedCreation import EmbedCreation
+from modals.ChangeLog import ChangelogModal
+
 from views.NewSuggestionView import CreateSuggestion
 from views.NewTicketView import CreateTicket
+
+from random import randint
 
 class StaffCommands(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -84,40 +89,59 @@ class StaffCommands(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def embedchangelog(
         self,
-        ctx : discord.ApplicationContext,
-        message=None,
+        interaction: discord.Interaction
     ):
-        embed = discord.Embed(title="Changelog", description=f"{message}")
-        await ctx.send_response("Changelog published !", ephemeral=True)
-        await ctx.send(embed=embed)
-        
+        await interaction.response.send_modal(ChangelogModal(bot=self.bot))
+
+    @embed.command(name="create", description="Sends an embeded text")
+    @commands.has_permissions(manage_messages=True)
+    async def embedchangelog(
+        self,
+        interaction: discord.Interaction
+    ):
+        await interaction.response.send_modal(EmbedCreation(bot=self.bot))
+    
+
     #=================================
     #============Errors===============
     #================================= 
-    
-    @embedrules.error
-    async def embedrules_error(self, ctx: discord.ApplicationContext, error: commands.CommandError) -> None:
-        PermissionMissing = discord.Embed(title='Error !', description="You don't have the required permissions to execute this command.", color=discord.Color.red())
-        PermissionMissing.set_footer(text="If you think that this is an error please report it to an admin", icon_url="https://asicalug.netlify.app/storage/warning.png")
 
+
+    @embedrules.error
+    async def embedrules_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
         if isinstance(error, commands.errors.MissingPermissions):
-            await ctx.send_response(embed=PermissionMissing, ephemeral=True)
+            await ctx.send_response(embed=embed, ephemeral=True)
 
     @setup_suggestions.error
-    async def embedrules_error(self, ctx: discord.ApplicationContext, error: commands.CommandError) -> None:
-        PermissionMissing = discord.Embed(title='Error !', description="You don't have the required permissions to execute this command.", color=discord.Color.red())
-        PermissionMissing.set_footer(text="If you think that this is an error please report it to an admin", icon_url="https://asicalug.netlify.app/storage/warning.png")
-
+    async def embedrules_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
         if isinstance(error, commands.errors.MissingPermissions):
-            await ctx.send_response(embed=PermissionMissing, ephemeral=True)
+            await ctx.send_response(embed=embed, ephemeral=True)
 
     @setup_tickets.error
-    async def embedrules_error(self, ctx: discord.ApplicationContext, error: commands.CommandError) -> None:
-        PermissionMissing = discord.Embed(title='Error !', description="You don't have the required permissions to execute this command.", color=discord.Color.red())
-        PermissionMissing.set_footer(text="If you think that this is an error please report it to an admin", icon_url="https://asicalug.netlify.app/storage/warning.png")
-
+    async def embedrules_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
         if isinstance(error, commands.errors.MissingPermissions):
-            await ctx.send_response(embed=PermissionMissing, ephemeral=True)
+            await ctx.send_response(embed=embed, ephemeral=True)
+
+    @embedchangelog.error
+    async def embedrules_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
 
 def setup(bot: commands.Bot):
     bot.add_cog(StaffCommands(bot))
