@@ -43,7 +43,6 @@ async def on_ready():
         if filename.endswith(".py"):
             classes = [obj for name, obj in inspect.getmembers(importlib.import_module(f"views.{filename[:-3]}")) if inspect.isclass(obj) and issubclass(obj, discord.ui.View)]
             for view in classes:
-                bot.add_view(view(bot=bot)) # type: ignore
                 print(f"Loaded {view.__name__}")
 
 bot.run(TOKEN)

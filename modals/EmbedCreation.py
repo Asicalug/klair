@@ -18,24 +18,6 @@ class EmbedCreation(discord.ui.Modal):
                 max_length=4000,
                 style=discord.InputTextStyle.long
             ),
-            discord.ui.InputText(
-                label="Red (r)",
-                placeholder="00",
-                max_length=2,
-                style=discord.InputTextStyle.short
-            ),
-            discord.ui.InputText(
-                label="Red (g)",
-                placeholder="00",
-                max_length=2,
-                style=discord.InputTextStyle.short
-            ),
-            discord.ui.InputText(
-                label="Red (b)",
-                placeholder="00",
-                max_length=2,
-                style=discord.InputTextStyle.short
-            ),
             title=title,
             *args,
             **kwargs
@@ -43,7 +25,7 @@ class EmbedCreation(discord.ui.Modal):
 
 
     async def callback(self, interaction: discord.Interaction):
-        embed = discord.Embed(title=self.children[0].value, description=self.children[1].value, color=discord.Color.from_rgb(self.children[2].value, self.children[3].value, self.children[4].value))
+        embed = discord.Embed(title=self.children[0].value, description=self.children[1].value, color=discord.Color.blurple())
         embed.set_author(name=interaction.user, icon_url=interaction.user.display_avatar) # type: ignore
         embed.timestamp = discord.utils.utcnow() # type: ignore
         await interaction.channel.send(embed=embed)
