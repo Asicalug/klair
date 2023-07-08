@@ -27,9 +27,9 @@ class UserCommands(commands.Cog):
         uuid = api.get_uuid(f"{username}")
         member = ctx.guild.get_member(ctx.user.id)
         self.bot.settings.set(f"Link.Username.{member}", username) # type: ignore
-        if not uuid:
+        if (not uuid):
             embed = discord.Embed(title="Error !", description="Username doesn't exist.\n*Keep in mind that this doesn't work with cracked accounts*")
-            await ctx.send_response(embed=embed)
+            await ctx.send_response(embed=embed, ephemeral=True)
         else:
             embed = discord.Embed(title='Is This You ?', description='Confirm that this Minecraft account belongs to you.', color=discord.Color.yellow())
             embed.add_field(name="Minecraft Username", value=f"{username}")

@@ -8,7 +8,7 @@ class YesLinkAccount(Button):
 
     async def callback(self, interaction: discord.Interaction):
         member = interaction.guild.get_member(interaction.user.id)
-        username = self.bot.settings.get("Link.username")
+        username = self.bot.settings.get(f"Link.Username.{member}")
         await member.edit(nick=username)
 
         embed = discord.Embed(title="Linked!", description="Your account has been successfully linked.", color=discord.Color.green())
