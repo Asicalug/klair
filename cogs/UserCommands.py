@@ -25,7 +25,8 @@ class UserCommands(commands.Cog):
         username : Option(str)
     ):
         uuid = api.get_uuid(f"{username}")
-        self.bot.settings.set("Link.username", username) # type: ignore
+        member = ctx.guild.get_member(ctx.user.id)
+        self.bot.settings.set(f"Link.Username.{member}", username) # type: ignore
         if not uuid:
             embed = discord.Embed(title="Error !", description="Username doesn't exist.\n*Keep in mind that this doesn't work with cracked accounts*")
             await ctx.send_response(embed=embed)
@@ -42,10 +43,10 @@ class UserCommands(commands.Cog):
     async def unlink(
         self,
         ctx: discord.ApplicationCommand,
-        username : Option(str)
     ):
-        uuid = api.get_uuid(f"{username}")
         member = ctx.guild.get_member(ctx.user.id)
+        username = self.bot.settings.get(f"Link.Username.{member}") # type: ignore
+        uuid = api.get_uuid(f"{username}")
         await member.edit(nick=None)
         embed = discord.Embed(title='Account Unlinked !', description='Your Minecraft account has been unlinked', color=discord.Color.yellow())
         embed.set_thumbnail(url=f"https://visage.surgeplay.com/bust/128/{uuid}")
