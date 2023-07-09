@@ -2,6 +2,9 @@ import discord
 import traceback
 from discord.interactions import Interaction
 import discord.guild
+from discord.ui import View, Button
+
+from views.CloseTicketView import CloseTicket
 
 
 class TicketModal(discord.ui.Modal):
@@ -24,9 +27,15 @@ class TicketModal(discord.ui.Modal):
         embed.set_author(name=interaction.user.name, icon_url=interaction.user.display_avatar) # type: ignore
         embed.timestamp = discord.utils.utcnow() # type: ignore
         guild = interaction.guild
-        category = discord.utils.get(guild.categories, name="Tickets.Category")
-        await guild.create_text_channel(name=f"ticket-{interaction.user}", category=category)
+        category = discord.utils.get(guild.categories, id=self.bot.settings.get("Tickets.Category"))
+        channel = await guild.create_text_channel(name=f"ticket-{interaction.user}", category=category)
         await interaction.response.send_message("Ticket created", ephemeral=True)
+        await channel.send(embed=embed)
+        self.bot.settings.set(f"Tickets.UserChannel.{interaction.user.id}", channel.id) # type: ignore
+        view = View()
+        view.add_item(item=CloseTicket(bot=self.bot))
+        channel1 = self.bot.get_channel(self.bot.settings.get("Tickets.Panel"))
+        await channel1.send(f"{interaction.user} Created a ticket")
 
     async def on_error(self, error: Exception, interaction: Interaction):
         embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())

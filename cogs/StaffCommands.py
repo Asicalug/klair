@@ -22,7 +22,7 @@ class StaffCommands(commands.Cog):
     
 
     @setup.command(name="suggestions", description="Sets up Suggestions")
-    @commands.has_permissions(manage_channels=True)
+
     async def setup_suggestions(
         self,
         ctx: discord.ApplicationContext,
@@ -100,8 +100,18 @@ class StaffCommands(commands.Cog):
         interaction: discord.Interaction
     ):
         await interaction.response.send_modal(EmbedCreation(bot=self.bot))
-    
 
+    @setup.command(name="log", description="Sets up a logging channel")
+    @commands.has_permissions(manage_channels=True)
+    async def setuplog(
+        self,
+        ctx : discord.ApplicationContext,
+        channel: Option(discord.TextChannel, "The Channel to send the logs"),
+    ):
+        self.bot.settings.set("Logs.Channel", channel.id) # type: ignore
+        await ctx.send_response("Log Channel set", ephemeral=True)
+        
+    
     #=================================
     #============Errors===============
     #================================= 
@@ -142,6 +152,8 @@ class StaffCommands(commands.Cog):
         embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
         if isinstance(error, commands.errors.MissingPermissions):
             await ctx.send_response(embed=embed, ephemeral=True)
+
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(StaffCommands(bot))

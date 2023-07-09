@@ -5,14 +5,24 @@
     },
     "Tickets": {
         "Panel": 1127247280991387710,
-        "Category": 1120369351925694625
+        "Category": 1127688717910409387,
+        "UserChannel": {
+            "1080643375960707092": 1127701174414491790
+        }
     },
     "Link": {
         "Username": {
-            "asicalug#0": "Notch",
+            "asicalug#0": "Asicalug",
             "leocodes": {
                 "#0": "MissingBuilder"
-            }
+            },
+            "omairr": {
+                "#0": "omairr"
+            },
+            "r_3_d__#0": "romeolepropro"
         }
+    },
+    "Logs": {
+        "Channel": 1127690517413638265
     }
 }

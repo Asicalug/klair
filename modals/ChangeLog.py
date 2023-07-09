@@ -30,6 +30,8 @@ class ChangelogModal(discord.ui.Modal):
         embed.timestamp = discord.utils.utcnow() # type: ignore
         await interaction.channel.send(embed=embed)
         await interaction.response.send_message("Changelog Sent", ephemeral=True)
+        channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
+        await channel.send(f"{interaction.user} sent a changelog embed in <#{interaction.channel_id}>")
 
     async def on_error(self, error: Exception, interaction: Interaction):
         embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
