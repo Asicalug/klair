@@ -38,8 +38,7 @@ class UserCommands(commands.Cog):
             view.add_item(YesLinkAccount(bot=self.bot))
             view.add_item(NoLinkAccount(bot=self.bot))
             await ctx.send_response(embed=embed, view=view, ephemeral=True)
-            channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
-            await channel.send(f"<@{ctx.user.id}> linked their account to {username}")
+
 
     @commands.slash_command()
     async def unlink(
