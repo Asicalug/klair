@@ -26,3 +26,4 @@ class Settings:
             obj = obj[k]
         obj[keys[-1]] = value
         json.dump(self.settings, open("./settings.json", "w"), indent=4)
+

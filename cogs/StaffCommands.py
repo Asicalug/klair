@@ -110,6 +110,79 @@ class StaffCommands(commands.Cog):
     ):
         self.bot.settings.set("Logs.Channel", channel.id) # type: ignore
         await ctx.send_response("Log Channel set", ephemeral=True)
+
+    @commands.slash_command(name="warn", description="warn a user")
+    @commands.has_permissions(moderate_members=True)
+    async def warn(
+        self, 
+        ctx : discord.ApplicationContext,
+        user : Option(discord.Member, "The user to warn"),
+        reason : Option(str, "The reason the user has been warned")
+    ): 
+        if self.bot.settings.get(f"Warns.{user.id}")==None:
+            self.bot.settings.set(f"Warns.{user.id}", 1)
+            member = ctx.guild.get_member(ctx.user.id)
+            warns = self.bot.settings.get(f"Warns.{user.id}")
+            channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
+            await ctx.send_response(f"<@{user.id}> has been warned", ephemeral=True)
+            embed = discord.Embed(title="Warned", description=f"You've been warned by <@{member.id}> in the Klair discord server, you now have `{warns}` warns.")
+            embed.add_field(name="Reason", value=f"{reason}")
+            await user.send(embed=embed)
+            await channel.send(f"<@{user.id}> has been warned by <@{member.id}> for {reason} and has now `{warns}` warns.")
+        else:
+            member = ctx.guild.get_member(ctx.user.id)
+            add_warn = self.bot.settings.get(f"Warns.{user.id}")+1
+            warns = self.bot.settings.get(f"Warns.{user.id}")
+            channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
+            self.bot.settings.set(f"Warns.{user.id}", add_warn)
+            await ctx.send_response(f"<@{user.id}> has been warned", ephemeral=True)
+            embed = discord.Embed(title="Warned", description=f"You've been warned by <@{member.id}> in the Klair discord server, you now have `{warns}` warns.")
+            embed.add_field(name="Reason", value=f"{reason}")
+            await user.send(embed=embed)
+            await channel.send(f"<@{user.id}> has been warned by <@{member.id}> for {reason} and has now `{warns}` warns.")
+
+
+    @commands.slash_command(name="remove_warn", description="remove warn(s) from a user")
+    @commands.has_permissions(moderate_members=True)
+    async def remove_warn(
+        self, 
+        ctx : discord.ApplicationContext,
+        user : Option(discord.Member, "The user to warn"),
+        number : Option(int, "How much warns to remove"),
+    ): 
+        member = ctx.guild.get_member(ctx.user.id)
+        remove_warn = self.bot.settings.get(f"Warns.{user.id}") -number
+        warns = self.bot.settings.get(f"Warns.{user.id}")
+        self.bot.settings.set(f"Warns.{user.id}", remove_warn)
+        channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
+        await ctx.send_response(f"{number} warns have been removed from <@{user.id}>", ephemeral=True)
+        embed = discord.Embed(title="Warns Removed", description=f"{number} warns has been removed from your account on the Klair discord server, you now have `{warns}` warns.")
+        await user.send(embed=embed)
+        await channel.send(f"<@{user.id}> has removed {number} warns from <@{member.id}> and has now `{warns}` warns.")
+
+
+    @commands.slash_command(name="info", description="Check a user's informations")
+    @commands.has_permissions(moderate_members=True)
+    async def info(
+        self,
+        ctx : discord.ApplicationContext,
+        user : discord.Member,
+    ):
+        warns = self.bot.settings.get(f"Warns.{user.id}")
+
+        if warns==None:
+            embed = discord.Embed(title=f"{user}'s Info", description=f"This is {user}'s information")
+            embed.set_author(name=f"{user}", icon_url=user.avatar)
+            embed.add_field(name="Warns", value=f"{user} has `0` warns.")
+            await ctx.send_response(embed=embed)
+        else:
+            embed = discord.Embed(title=f"{user}'s Info", description=f"This is {user}'s information")
+            embed.set_author(name=f"{user}", icon_url=user.avatar)
+            embed.add_field(name="Warns", value=f"{user} has `{warns}` warns.")
+            await ctx.send_response(embed=embed)
+
+
+
         
     
     #=================================

@@ -12,17 +12,13 @@
     },
     "Link": {
         "Username": {
-            "asicalug#0": "Asicalug",
-            "leocodes": {
-                "#0": "MissingBuilder"
-            },
-            "omairr": {
-                "#0": "omairr"
-            },
-            "r_3_d__#0": "romeolepropro"
+            "1080643375960707092": "asicalug"
         }
     },
     "Logs": {
         "Channel": 1127690517413638265
+    },
+    "Warns": {
+        "1080643375960707092": 0
     }
 }

@@ -26,7 +26,7 @@ class UserCommands(commands.Cog):
     ):
         uuid = api.get_uuid(f"{username}")
         member = ctx.guild.get_member(ctx.user.id)
-        self.bot.settings.set(f"Link.Username.{member}", username) # type: ignore
+        self.bot.settings.set(f"Link.Username.{member.id}", username) # type: ignore
         if not uuid:
             embed = discord.Embed(title="Error !", description="Username doesn't exist.\n*Keep in mind that this doesn't work with cracked accounts*")
             await ctx.send_response(embed=embed, ephemeral=True)
@@ -39,7 +39,7 @@ class UserCommands(commands.Cog):
             view.add_item(NoLinkAccount(bot=self.bot))
             await ctx.send_response(embed=embed, view=view, ephemeral=True)
             channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
-            await channel.send(f"{ctx.user} linked their account to {username}")
+            await channel.send(f"<@{ctx.user.id}> linked their account to {username}")
 
     @commands.slash_command()
     async def unlink(
@@ -47,14 +47,14 @@ class UserCommands(commands.Cog):
         ctx: discord.ApplicationCommand,
     ):
         member = ctx.guild.get_member(ctx.user.id)
-        username = self.bot.settings.get(f"Link.Username.{member}") # type: ignore
+        username = self.bot.settings.get(f"Link.Username.{member.id}") # type: ignore
         uuid = api.get_uuid(f"{username}")
         await member.edit(nick=None)
         embed = discord.Embed(title='Account Unlinked !', description='Your Minecraft account has been unlinked', color=discord.Color.yellow())
         embed.set_thumbnail(url=f"https://visage.surgeplay.com/bust/128/{uuid}")
         await ctx.send_response(embed=embed, ephemeral=True)
         channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
-        await channel.send(f"{ctx.user} unlinked their account ({username})")
+        await channel.send(f"<@{ctx.user.id}> unlinked their account ({username})")
     
 def setup(bot: commands.Bot):
     bot.add_cog(UserCommands(bot))
