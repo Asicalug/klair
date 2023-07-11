@@ -118,29 +118,16 @@ class StaffCommands(commands.Cog):
         ctx : discord.ApplicationContext,
         user : Option(discord.Member, "The user to warn"),
         reason : Option(str, "The reason the user has been warned")
-    ): 
-        if self.bot.settings.get(f"Warns.{user.id}")==None:
-            self.bot.settings.set(f"Warns.{user.id}", 1)
-            member = ctx.guild.get_member(ctx.user.id)
-            warns = self.bot.settings.get(f"Warns.{user.id}")
-            channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
-            await ctx.send_response(f"<@{user.id}> has been warned", ephemeral=True)
-            embed = discord.Embed(title="Warned", description=f"You've been warned by <@{member.id}> in the Klair discord server, you now have `{warns}` warns.")
-            embed.add_field(name="Reason", value=f"{reason}")
-            await user.send(embed=embed)
-            await channel.send(f"<@{user.id}> has been warned by <@{member.id}> for {reason} and has now `{warns}` warns.")
-        else:
-            member = ctx.guild.get_member(ctx.user.id)
-            add_warn = self.bot.settings.get(f"Warns.{user.id}")+1
-            warns = self.bot.settings.get(f"Warns.{user.id}")
-            channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
-            self.bot.settings.set(f"Warns.{user.id}", add_warn)
-            await ctx.send_response(f"<@{user.id}> has been warned", ephemeral=True)
-            embed = discord.Embed(title="Warned", description=f"You've been warned by <@{member.id}> in the Klair discord server, you now have `{warns}` warns.")
-            embed.add_field(name="Reason", value=f"{reason}")
-            await user.send(embed=embed)
-            await channel.send(f"<@{user.id}> has been warned by <@{member.id}> for {reason} and has now `{warns}` warns.")
-
+    ):
+        warns = (self.bot.settings.get(f"Warns.{user.id}") or 0) + 1
+        self.bot.settings.set(f"Warns.{user.id}", warns)
+        channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
+        member = ctx.guild.get_member(ctx.user.id)
+        await ctx.send_response(f"<@{user.id}> has been warned", ephemeral=True)
+        embed = discord.Embed(title="Warned", description=f"You've been warned by <@{member.id}> in the Klair discord server, you now have `{warns}` warns.")
+        embed.add_field(name="Reason", value=f"{reason}")
+        await user.send(embed=embed)
+        await channel.send(f"<@{user.id}> has been warned by <@{member.id}> for {reason} and has now `{warns}` warns.")
 
     @commands.slash_command(name="remove_warn", description="remove warn(s) from a user")
     @commands.has_permissions(moderate_members=True)
@@ -151,14 +138,14 @@ class StaffCommands(commands.Cog):
         number : Option(int, "How much warns to remove"),
     ): 
         member = ctx.guild.get_member(ctx.user.id)
-        remove_warn = self.bot.settings.get(f"Warns.{user.id}") -number
-        warns = self.bot.settings.get(f"Warns.{user.id}")
+        remove_warn = self.bot.settings.get(f"Warns.{user.id}")-number
         self.bot.settings.set(f"Warns.{user.id}", remove_warn)
+        warns = self.bot.settings.get(f"Warns.{user.id}")
         channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
         await ctx.send_response(f"{number} warns have been removed from <@{user.id}>", ephemeral=True)
         embed = discord.Embed(title="Warns Removed", description=f"{number} warns has been removed from your account on the Klair discord server, you now have `{warns}` warns.")
         await user.send(embed=embed)
-        await channel.send(f"<@{user.id}> has removed {number} warns from <@{member.id}> and has now `{warns}` warns.")
+        await channel.send(f"<@{member.id}> has removed {number} warns from <@{user.id}> and has now `{warns}` warns.")
 
 
     @commands.slash_command(name="info", description="Check a user's informations")
