@@ -8,7 +8,7 @@ class CloseTicket(Button):
 
     async def callback(self, interaction: discord.Interaction):
         guild = interaction.guild
-        channel = discord.utils.get(guild.channels, id=self.bot.settings.get(f"Tickets.UserChannel.{interaction.user.id}"))
+        channel = discord.TextChannel(guild=guild)
         await channel.delete()
 
         embed = discord.Embed(title="Closed!", description="The ticket has been successfully closed.", color=discord.Color.green())

@@ -16,7 +16,8 @@ class UserCommands(commands.Cog):
     
     @commands.slash_command()
     async def ping(self, ctx: discord.ApplicationCommand):
-        await ctx.response.send_message(f"Pong! {round(self.bot.latency * 1000)}ms")
+        embed = discord.Embed(title='Pong !', description=f"{self.bot.latency * 1000}ms")
+        await ctx.response.send_message(embed=embed)
 
     @commands.slash_command()
     async def link(

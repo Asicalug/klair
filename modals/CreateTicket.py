@@ -23,18 +23,24 @@ class TicketModal(discord.ui.Modal):
         )
 
     async def callback(self, interaction: discord.Interaction):
+        overwrites = {
+             interaction.guild.default_role: discord.PermissionOverwrite(read_messages=False),
+             interaction.guild.me: discord.PermissionOverwrite(read_messages=True),
+             interaction.user: discord.PermissionOverwrite(read_messages=True), 
+        }
         embed = discord.Embed(description=self.children[0].value, color=discord.Color.blurple())
         embed.set_author(name=interaction.user.name, icon_url=interaction.user.display_avatar) # type: ignore
         embed.timestamp = discord.utils.utcnow() # type: ignore
-        guild = interaction.guild
-        category = discord.utils.get(guild.categories, id=self.bot.settings.get("Tickets.Category"))
-        channel = await guild.create_text_channel(name=f"ticket-{interaction.user}", category=category)
-        await interaction.response.send_message("Ticket created", ephemeral=True)
-        await channel.send(embed=embed)
-        self.bot.settings.set(f"Tickets.UserChannel.{interaction.user.id}", channel.id) # type: ignore
         view = View()
         view.add_item(item=CloseTicket(bot=self.bot))
-        channel1 = self.bot.get_channel(self.bot.settings.get("Tickets.Panel"))
+        guild = interaction.guild
+        category = discord.utils.get(guild.categories, id=self.bot.settings.get("Tickets.Category"))
+        channel = await guild.create_text_channel(name=f"ticket-{interaction.user}", category=category, overwrites=overwrites)
+        await interaction.response.send_message("Ticket created", ephemeral=True)
+        await channel.send(embed=embed)
+        await channel.per
+        self.bot.settings.set(f"Tickets.UserChannel.{interaction.user.id}", channel.id) # type: ignore
+        channel1 = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
         await channel1.send(f"{interaction.user} Created a ticket")
 
     async def on_error(self, error: Exception, interaction: Interaction):
