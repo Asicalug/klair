@@ -169,7 +169,18 @@ class StaffCommands(commands.Cog):
             await ctx.send_response(embed=embed)
 
 
-
+    @commands.slash_command(name="purge", description="Purges a specific amount of messages")
+    @commands.has_permissions(moderate_members=True)
+    async def purge(
+        self,
+        ctx : discord.ApplicationContext,
+        amount : Option(int)
+    ):
+        amount = amount
+        embed = discord.Embed(title="Purged", description=f"{amount} message.s have been purged")
+        await ctx.channel.purge(limit=amount)
+        await ctx.send_response(embed=embed, ephemeral=True)
+ 
         
     
     #=================================
@@ -213,6 +224,41 @@ class StaffCommands(commands.Cog):
         if isinstance(error, commands.errors.MissingPermissions):
             await ctx.send_response(embed=embed, ephemeral=True)
 
+    @warn.error
+    async def warn_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
+
+    @remove_warn.error
+    async def rmwarn_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
+    
+    @info.error
+    async def info_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
+
+    @purge.error
+    async def purge_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
 
 
 def setup(bot: commands.Bot):

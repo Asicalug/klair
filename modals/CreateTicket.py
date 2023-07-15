@@ -31,14 +31,10 @@ class TicketModal(discord.ui.Modal):
         embed = discord.Embed(description=self.children[0].value, color=discord.Color.blurple())
         embed.set_author(name=interaction.user.name, icon_url=interaction.user.display_avatar) # type: ignore
         embed.timestamp = discord.utils.utcnow() # type: ignore
-        view = View()
-        view.add_item(item=CloseTicket(bot=self.bot))
         guild = interaction.guild
         category = discord.utils.get(guild.categories, id=self.bot.settings.get("Tickets.Category"))
         channel = await guild.create_text_channel(name=f"ticket-{interaction.user}", category=category, overwrites=overwrites)
-        await interaction.response.send_message("Ticket created", ephemeral=True)
-        await channel.send(embed=embed)
-        await channel.per
+        await channel.send(embed=embed, view=CloseTicket(bot=self.bot))
         self.bot.settings.set(f"Tickets.UserChannel.{interaction.user.id}", channel.id) # type: ignore
         channel1 = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
         await channel1.send(f"{interaction.user} Created a ticket")

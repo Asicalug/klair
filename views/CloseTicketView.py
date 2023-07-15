@@ -1,15 +1,20 @@
 import discord
-from discord.ui import Button, View
 
-class CloseTicket(Button):
+class CloseTicket(discord.ui.View):
     def __init__(self, bot) -> None:
-        super().__init__(style=discord.ButtonStyle.danger, label="Close 🔒")
+        super().__init__(timeout=None)
         self.bot = bot
 
-    async def callback(self, interaction: discord.Interaction):
-        guild = interaction.guild
-        channel = discord.TextChannel(guild=guild)
-        await channel.delete()
-
-        embed = discord.Embed(title="Closed!", description="The ticket has been successfully closed.", color=discord.Color.green())
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+    @discord.ui.button(label="Close Ticket", style=discord.ButtonStyle.primary, custom_id="close_tickett", emoji="🔒")
+    async def button_callback(self, button, interaction: discord.Interaction):
+        if interaction.user.guild_permissions.manage_messages:
+            embed = discord.Embed(
+                title="Closed!",
+                description="The ticket has been successfully closed.",
+                color=discord.Color.green()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.channel.delete()
+        else:
+            embed = discord.Embed(title='Error', description="You do not have permissions to do that !")
+            await interaction.response.send_message(embed=embed)
