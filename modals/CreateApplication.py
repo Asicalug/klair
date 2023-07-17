@@ -40,6 +40,12 @@ class ApplicationModal(discord.ui.Modal):
                 style=discord.InputTextStyle.long,
                 required=True,
             ),
+            discord.ui.InputText(
+                label="Vouchers",
+                placeholder="If you don't have any leave this blank",
+                max_length=500,
+                required=False
+            ),
             title=title,
             *args,
             **kwargs

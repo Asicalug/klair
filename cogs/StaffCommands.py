@@ -79,7 +79,7 @@ class StaffCommands(commands.Cog):
         panel : Option(discord.TextChannel, "The channel to submit an application"),
         applications : Option(discord.TextChannel, "The channel to send the applications to")
     ): 
-        if self.bot.settings.get("Tickets.Panel") != None: # type: ignore
+        if self.bot.settings.get("Applications.Panel") != None: # type: ignore
             try:
                 channel = await self.bot.fetch_channel(self.bot.settings.get("Tickets.Panel")) # type: ignore
                 message = await channel.history().find(lambda m: m.author == self.bot.user) # type: ignore
@@ -223,7 +223,7 @@ class StaffCommands(commands.Cog):
         await ctx.channel.purge(limit=amount)
         await ctx.send_response(embed=embed, ephemeral=True)
     
-    @dming.command(name="message", description="Send a Direct Message (DM) To a Specific User")
+    @dming.command(name="embed", description="Send a Direct Message (DM) To a Specific User")
     @commands.has_permissions(moderate_members=True)
     async def dm(
         self,
@@ -233,6 +233,19 @@ class StaffCommands(commands.Cog):
         user = ctx.guild.get_member(ctx.user.id)
         self.bot.settings.set(f"Dm.{user.id}", member.id)
         await ctx.response.send_modal(DMEmbedCreation(bot=self.bot))
+
+    @dming.command(name="message", description="Send a Direct Message (DM) To a Specific User")
+    @commands.has_permissions(moderate_members=True)
+    async def dm(
+        self,
+        ctx : discord.ApplicationContext,
+        member : Option(discord.Member, "member to send the message to"),
+        message : Option(str, "Message to send")
+    ):
+        user = ctx.guild.get_member(ctx.user.id)
+        await member.send(f"{message}\n*sent by {user.mention}*")
+        await ctx.send_response("DM sent", ephemeral=True)
+
 
         
     

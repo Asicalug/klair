@@ -50,6 +50,7 @@ class DMEmbedCreation(discord.ui.Modal):
         user = interaction.guild.get_member(interaction.user.id)
         member = interaction.guild.get_member(self.bot.settings.get(f"Dm.{user.id}"))
         await member.send(embed=embed)
+        await interaction.response.send_message("DM sent", ephemeral=True)
 
     async def on_error(self, error: Exception, interaction: Interaction):
         embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())

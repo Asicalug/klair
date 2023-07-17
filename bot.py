@@ -29,11 +29,10 @@ bot.settings = Settings() # type: ignore
 for filename in os.listdir("./cogs"):
     if filename.endswith(".py"):
         bot.load_extension(f"cogs.{filename[:-3]}")
-        print("Cog Loaded")
 
 @bot.event
 async def on_message(message):
-    if message.content.lower()=="eta":
+    if "eta" in message.content.lower():
         await message.reply("There is currently no ETA. Please read <#1120369654653788302>")
 
 @bot.event
