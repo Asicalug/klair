@@ -81,7 +81,7 @@ class StaffCommands(commands.Cog):
     ): 
         if self.bot.settings.get("Applications.Panel") != None: # type: ignore
             try:
-                channel = await self.bot.fetch_channel(self.bot.settings.get("Tickets.Panel")) # type: ignore
+                channel = await self.bot.fetch_channel(self.bot.settings.get("Applications.Panel")) # type: ignore
                 message = await channel.history().find(lambda m: m.author == self.bot.user) # type: ignore
                 await message.delete() # type: ignore
             except:
