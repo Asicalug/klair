@@ -66,7 +66,7 @@ class StaffCommands(commands.Cog):
         
         self.bot.settings.set("Tickets.Panel", panel.id) # type: ignore
         self.bot.settings.set("Tickets.Category", ticket.id) # type: ignore
-        await panel.send(embed=discord.Embed(title="Create a Ticket", description="Click the button below to create a suggestion"), view=CreateTicket(bot=self.bot))
+        await panel.send(embed=discord.Embed(title="Create a Ticket", description="Click the button below to create a ticket"), view=CreateTicket(bot=self.bot))
         embed = discord.Embed(title="Setup", description="Ticket Creator successfully setup")
         embed.add_field(name="Panel Channel", value=panel.mention)
         embed.add_field(name="Ticket Category", value=ticket.mention)
