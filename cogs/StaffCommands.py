@@ -6,9 +6,11 @@ from discord.commands import SlashCommandGroup, Option
 
 from modals.EmbedCreation import EmbedCreation
 from modals.ChangeLog import ChangelogModal
+from modals.SendDM import DMEmbedCreation
 
 from views.NewSuggestionView import CreateSuggestion
 from views.NewTicketView import CreateTicket
+from views.CreateApplicationView import CreateApplication
 
 from random import randint
 
@@ -19,6 +21,7 @@ class StaffCommands(commands.Cog):
 
     setup = SlashCommandGroup(name="setup", description="Various Setup Commands")
     embed = SlashCommandGroup(name="embed", description="Various Embed Commands")
+    dming = SlashCommandGroup(name="dm", description="Various DMing Commands")
     
 
     @setup.command(name="suggestions", description="Sets up Suggestions")
@@ -69,6 +72,30 @@ class StaffCommands(commands.Cog):
         embed.add_field(name="Ticket Category", value=ticket.mention)
         await ctx.respond(embed=embed)
 
+    @setup.command(name="applications", description="Sets Up a Staff Applications in specific channels")
+    @commands.has_permissions(manage_roles = True)
+    async def setup_applications(self,
+        ctx : discord.ApplicationContext, 
+        panel : Option(discord.TextChannel, "The channel to submit an application"),
+        applications : Option(discord.TextChannel, "The channel to send the applications to")
+    ): 
+        if self.bot.settings.get("Tickets.Panel") != None: # type: ignore
+            try:
+                channel = await self.bot.fetch_channel(self.bot.settings.get("Tickets.Panel")) # type: ignore
+                message = await channel.history().find(lambda m: m.author == self.bot.user) # type: ignore
+                await message.delete() # type: ignore
+            except:
+                pass
+
+        self.bot.settings.set("Applications.Panel", panel.id)
+        self.bot.settings.set("Applications.Channel", applications.id)
+        embed = discord.Embed(title="Apply", description="Click on the button below to create an application.", color=discord.Color.red())
+        await panel.send(embed=embed, view=CreateApplication(bot=self.bot))
+        embed2 = discord.Embed(title="Setup", description="Application Creator successfully setup")
+        embed2.add_field(name="Panel Channel", value=panel.mention)
+        embed2.add_field(name="Application Channel", value=applications.mention)
+        await ctx.response.send_message(embed=embed2)
+
     @embed.command(name="rules", description="Sends Rules Embed")
     @commands.has_permissions(manage_messages = True)
     async def embedrules(
@@ -85,6 +112,21 @@ class StaffCommands(commands.Cog):
         embed5.add_field(name="Rules", value="* 1. Be Respectful and dont be mean to others :D\n\n* 2. No Spamming\n\n* 3. No Advertising,\n\n* 4. No Threatening\n\n* 5. Dont share any personal information\n\n* 6. Be a good person :D")
         await ctx.send_response(embeds=(embed1, embed2, embed3, embed4, embed5))
     
+    @embed.command(name="commmunity_support", description="Sends Rules Embed")
+    @commands.has_permissions(manage_messages = True)
+    async def embedcommunitysupport(
+        self,
+        ctx: discord.ApplicationContext,
+    ):
+        embed1 = discord.Embed(title="Community Support's Basics", description="Please use this to seek support from the community and to avoid disturbing any staff members", color=discord.Color.red())
+        embed2 = discord.Embed(title="Before Asking", description="Before asking, please check <#1120369654653788302> to avoid annoying anyone and to keep this channel clean.", color=discord.Color.red())
+        embed3 = discord.Embed(color=discord.Color.red())
+        embed3.set_image(url="https://r2.e-z.host/17a2b375-7193-4f28-94c4-be10a3e7c1b4/iqzm639w.png")
+        embed4 = discord.Embed(title="Rules", description="- 1. Please be respectful to others and don't beg for answers\n- 2. If you REALLY need help and there isn't any members that can help you, create a ticket @ <#1127247280991387710>\n- 3. Don't excessively ping anyone\n- 4. Any rules in <#1120363306725679136> apply in this channel.", color=discord.Color.red())
+        embed5 = discord.Embed(description="Thank you for reading and understanding.", color=discord.Color.red())
+        await ctx.send(embeds=[embed1, embed2, embed3, embed4, embed5])
+        await ctx.response.send_message("Embed Sent", ephemeral=True)
+
     @embed.command(name="changelog", description="Sends a changelog embed")
     @commands.has_permissions(manage_messages=True)
     async def embedchangelog(
@@ -180,7 +222,18 @@ class StaffCommands(commands.Cog):
         embed = discord.Embed(title="Purged", description=f"{amount} message.s have been purged")
         await ctx.channel.purge(limit=amount)
         await ctx.send_response(embed=embed, ephemeral=True)
- 
+    
+    @dming.command(name="message", description="Send a Direct Message (DM) To a Specific User")
+    @commands.has_permissions(moderate_members=True)
+    async def dm(
+        self,
+        ctx : discord.ApplicationContext,
+        member : Option(discord.Member)
+    ):
+        user = ctx.guild.get_member(ctx.user.id)
+        self.bot.settings.set(f"Dm.{user.id}", member.id)
+        await ctx.response.send_modal(DMEmbedCreation(bot=self.bot))
+
         
     
     #=================================
@@ -217,6 +270,15 @@ class StaffCommands(commands.Cog):
 
     @embedchangelog.error
     async def embedrules_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
+
+    @embedchangelog.error
+    async def embedcommunitysupport(self, ctx: discord.ApplicationContext, error: Exception) -> None:
         errorcode = randint(10000, 99999)
         embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
         embed.add_field(name="Error", value=f"```\n{error}\n```")

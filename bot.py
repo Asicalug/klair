@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 
 from utils.settings import Settings
 
+from cogs.StaffCommands import StaffCommands
+
 intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
@@ -44,5 +46,7 @@ async def on_ready():
             classes = [obj for name, obj in inspect.getmembers(importlib.import_module(f"views.{filename[:-3]}")) if inspect.isclass(obj) and issubclass(obj, discord.ui.View)]
             for view in classes:
                 print(f"Loaded {view.__name__}")
+
+    
 
 bot.run(TOKEN)
