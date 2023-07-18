@@ -26,13 +26,6 @@ class ApplicationModal(discord.ui.Modal):
                 style=discord.InputTextStyle.short,
             ),
             discord.ui.InputText(
-                label="What's your experience ?",
-                placeholder="If none, leave this blank",
-                max_length=2000,
-                style=discord.InputTextStyle.paragraph,
-                required=False,
-            ),
-            discord.ui.InputText(
                 label="Why you ?",
                 placeholder="Because...\n*At least 100 characters.*",
                 max_length=4000,
@@ -58,8 +51,7 @@ class ApplicationModal(discord.ui.Modal):
         embed.add_field(name="First and Last Name", value=self.children[0].value, inline=False)
         embed.add_field(name="Age", value=self.children[1].value, inline=False)
         embed.add_field(name="How active can they be", value=self.children[2].value, inline=False)
-        embed.add_field(name="Experience", value=self.children[3].value, inline=False)
-        embed.add_field(name="Why should we choose them", value=self.children[4].value, inline=False)
+        embed.add_field(name="Why should we choose them", value=self.children[3].value, inline=False)
         embed.set_author(name=interaction.user.name, icon_url=interaction.user.display_avatar)
         await channel.send(embed=embed)
         await interaction.response.send_message("Application created", ephemeral=True)

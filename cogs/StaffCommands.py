@@ -54,7 +54,8 @@ class StaffCommands(commands.Cog):
         )
         embed.add_field(name="🗳️ Submitting a Suggestion", value='- 1. Click on the "Submit a suggestion" button below.\n- 2. A modal will appear, allowing you to provide details about your suggestion.\n- 3. Fill out the form with as much information as possible to help us understand your idea.\n- 4. Hit the "Submit" button to send your suggestion.\n', inline=False)
         embed.add_field(name="📝 Review Process:", value="- Once you've submitted a suggestion, it will be reviewed by our team.\n- Initially, your suggestion will appear in the ⁠<#1130812603426426910> thread for evaluation.\n- Our team will carefully consider your suggestion and provide updates as necessary.\n- If your suggestion is accepted, it will be moved to the ⁠<#1130812755629309965> thread. If your suggestion is not feasible or aligns with our current plans, it will be moved to the <#1130812858523979806> thread.\n\n- We'll keep you updated on the status of your suggestion throughout the process.\n", inline=False)
-        embed.add_field(name="📌 Important Reminders:", value="- Ensure your suggestion is constructive and aligns with the goals of our server.\n- Avoid submitting duplicate suggestions. Check the existing suggestions before posting.\n- Be patient! The review process may take some time, but we value your input.\n\n👍 Thank you for taking the time to contribute to the Hybris community! Your suggestions help us make our products even better. If you have any questions, feel free to ask in the support channel.", inline=False)
+        embed.add_field(name="📌 Important Reminders:", value="- Ensure your suggestion is constructive and aligns with the goals of our server.\n- Avoid submitting duplicate suggestions. Check the existing suggestions before posting.\n- Be patient! The review process may take some time, but we value your input.\n\n👍 Thank you for taking the time to contribute to the Klair community! Your suggestions help us make our products even better. If you have any questions, feel free to ask in the support channel.", inline=False)
+        embed.set_footer(text="Inspired from Hybris, https://discord.gg/hybris")
         await panel.send(embed=embed, view=CreateSuggestion(bot=self.bot))
         embed = discord.Embed(title="Setup", description="Suggestion successfully setup")
         embed.add_field(name="Panel Channel", value=panel.mention)
@@ -117,7 +118,7 @@ class StaffCommands(commands.Cog):
         self,
         ctx: discord.ApplicationContext,
     ):
-        embed1 = discord.Embed(title="Klair", description="Welcome to the Official Discord Server of Klair Client. We are pleased to have you in our journey :D. Before continuing please read the rules and obey them, any user who breaks the rules is going to face some consequences (that is, ban, mute). NOTE: This Discord Server's Layout is inspired by Hybris.", color=discord.Color.red())
+        embed1 = discord.Embed(title="Klair", description="Welcome to the Official Discord Server of Klair Client. We are pleased to have you in our journey :D. Before continuing please read the rules and obey them, any user who breaks the rules is going to face some consequences (that is, ban, mute). NOTE: This Discord Server's Layout is inspired by Klair.", color=discord.Color.red())
         embed1.set_footer(icon_url="https://asicalug.netlify.app/storage/klair.png",)
         embed2 = discord.Embed(url="https://discord.gg/Hybris", title="Hybris' Discord", color=discord.Color.red())
         embed3 = discord.Embed(title="", color=discord.Color.red())

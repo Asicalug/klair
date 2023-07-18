@@ -11,7 +11,7 @@ class DenySuggestion(Button):
             await interaction.response.send_message("This Suggestion has already been Handled.", ephemeral=True)
             self.style=discord.ButtonStyle.gray
 
-        else:
+        if interaction.user.guild_permissions.manage_messages:
             message = await interaction.channel.fetch_message(interaction.message.id)
             embed = message.embeds[0]
             embed.set_footer(text=f"Denied by {interaction.user.display_name}", icon_url=interaction.user.display_avatar)
@@ -19,6 +19,7 @@ class DenySuggestion(Button):
             channel = self.bot.get_channel(self.bot.settings.get("Suggestions.Denied"))
             await channel.send(embed=embed)
             await message.delete(reason="Suggestion Handled")
+            await interaction.response.send_message("Suggestion Denied !", ephemeral=True)
             self.style = discord.ButtonStyle.secondary  # Change the button style to visually appear disabled
             logs = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
             await logs.send(f"{interaction.user.name} accepted a suggestion")
