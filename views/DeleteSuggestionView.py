@@ -24,3 +24,6 @@ class DeleteSuggestion(Button):
             logs = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
             await logs.send(f"{interaction.user.name} accepted a suggestion")
             self.bot.settings.set(f"Suggestions.Buttons.{interaction.message.id}", "Used")
+            
+        if not interaction.user.guild_permissions.manage_messages:
+            await interaction.response.send_message("You do not have permissions to do that", ephemeral=True)

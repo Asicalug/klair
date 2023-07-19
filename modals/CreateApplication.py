@@ -1,6 +1,7 @@
 import discord
 import traceback
 from discord.interactions import Interaction
+from discord.ui import View, Button
 
 class ApplicationModal(discord.ui.Modal):
     def __init__(self, bot, title="Create an Application", *args, **kwargs):
@@ -53,6 +54,8 @@ class ApplicationModal(discord.ui.Modal):
         embed.add_field(name="How active can they be", value=self.children[2].value, inline=False)
         embed.add_field(name="Why should we choose them", value=self.children[3].value, inline=False)
         embed.set_author(name=interaction.user.name, icon_url=interaction.user.display_avatar)
+        view = View()
+        view.add_item()
         await channel.send(embed=embed)
         await interaction.response.send_message("Application created", ephemeral=True)
         await log.send(f"<@{interaction.user.id}> created an application.")

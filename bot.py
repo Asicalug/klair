@@ -33,7 +33,9 @@ for filename in os.listdir("./cogs"):
 @bot.event
 async def on_message(message):
     if "eta" in message.content.lower():
-        await message.reply("There is currently no ETA. Please read <#1120369654653788302>")
+        if message.author != bot.user:
+            await message.reply("There is currently no ETA. Please read <#1120369654653788302>")
+            
 
 @bot.event
 async def on_ready():
@@ -45,6 +47,8 @@ async def on_ready():
             classes = [obj for name, obj in inspect.getmembers(importlib.import_module(f"views.{filename[:-3]}")) if inspect.isclass(obj) and issubclass(obj, discord.ui.View)]
             for view in classes:
                 print(f"Loaded {view.__name__}")
+
+
 
     
 

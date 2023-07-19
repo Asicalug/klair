@@ -241,7 +241,7 @@ class StaffCommands(commands.Cog):
     
     @dming.command(name="embed", description="Send a Direct Message (DM) To a Specific User")
     @commands.has_permissions(moderate_members=True)
-    async def dm(
+    async def dm_embed(
         self,
         ctx : discord.ApplicationContext,
         member : Option(discord.Member)
@@ -252,7 +252,7 @@ class StaffCommands(commands.Cog):
 
     @dming.command(name="message", description="Send a Direct Message (DM) To a Specific User")
     @commands.has_permissions(moderate_members=True)
-    async def dm(
+    async def dm_message(
         self,
         ctx : discord.ApplicationContext,
         member : Option(discord.Member, "member to send the message to"),
@@ -262,8 +262,41 @@ class StaffCommands(commands.Cog):
         await member.send(f"{message}\n*sent by {user.mention}*")
         await ctx.send_response("DM sent", ephemeral=True)
 
+    @commands.slash_command(name="ban", description="Ban a member")
+    @commands.has_permissions(ban_members=True)
+    async def ban(
+        self, 
+        ctx : discord.ApplicationContext,
+        member : Option(discord.Member, "member to ban from the guild"),
+        reason : Option(str, "Reason The Member Has Been Banned For"),
+    ):
+        guild = discord.Guild.name
+        logs = self.bot.settings.get("Logs.Channel")
+        embed = discord.Embed(title="You have been banned !", description=f"You have been banned from {guild}")
+        embed.add_field(name="Reason : ", value=f"{reason}")
+        embed.set_footer(text="If you think that this was an error please contact `adeebur`, `asicalug` or `leocodes.`.")
+        await member.send(embed=embed)
+        await member.ban()
+        await ctx.response.send_message(f"{member.mention} has been banned.", ephemeral=True)
+        await logs.send(f"{member.mention} has been unbanned by {ctx.user.mention}.")
 
-        
+    @commands.slash_command(name="unban", description="unban a specific banned member")
+    @commands.has_permissions(ban_members=True)
+    async def unban(
+        self,
+        ctx : discord.ApplicationContext,
+        member : Option(discord.User, "The member to unban"),
+        reason : Option(str, "Reason to unban the member")
+    ):
+        guild = discord.Guild.name
+        logs = self.bot.settings.get("Logs.Channel")
+        embed = discord.Embed(title="You have been unbanned!", description=f"You have been banned from {guild}")
+        embed.add_field(name="Reason : ", value=f"{reason}")
+        await member.send(embed=embed)
+        await member.unban()
+        await ctx.response.send_message(f"{member.mention}> has been unbanned.", ephemeral=True)
+        await logs.send(f"{ctx.user.mention} has unbanned {member.mention}.")
+
     
     #=================================
     #============Errors===============
@@ -343,6 +376,24 @@ class StaffCommands(commands.Cog):
             await ctx.send_response(embed=embed, ephemeral=True)
 
     @purge.error
+    async def purge_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
+
+    @dm_message.error
+    async def purge_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
+
+    @dm_embed.error
     async def purge_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
         errorcode = randint(10000, 99999)
         embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
