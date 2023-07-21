@@ -271,7 +271,7 @@ class StaffCommands(commands.Cog):
         reason : Option(str, "Reason The Member Has Been Banned For"),
     ):
         guild = discord.Guild.name
-        logs = self.bot.settings.get("Logs.Channel")
+        logs = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
         embed = discord.Embed(title="You have been banned !", description=f"You have been banned from {guild}")
         embed.add_field(name="Reason : ", value=f"{reason}")
         embed.set_footer(text="If you think that this was an error please contact `adeebur`, `asicalug` or `leocodes.`.")
@@ -285,17 +285,16 @@ class StaffCommands(commands.Cog):
     async def unban(
         self,
         ctx : discord.ApplicationContext,
-        member : Option(discord.User, "The member to unban"),
+        id : Option(str, "The member to unban"),
         reason : Option(str, "Reason to unban the member")
     ):
+        id = int(id)
         guild = discord.Guild.name
-        logs = self.bot.settings.get("Logs.Channel")
-        embed = discord.Embed(title="You have been unbanned!", description=f"You have been banned from {guild}")
-        embed.add_field(name="Reason : ", value=f"{reason}")
-        await member.send(embed=embed)
-        await member.unban()
-        await ctx.response.send_message(f"{member.mention}> has been unbanned.", ephemeral=True)
-        await logs.send(f"{ctx.user.mention} has unbanned {member.mention}.")
+        user = await self.bot.fetch_user(id)
+        logs = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
+        await ctx.guild.unban(user)
+        await ctx.response.send_message(f"{user.mention} has been unbanned.", ephemeral=True)
+        await logs.send(f"{user.mention} has unbanned {user.mention}.")
 
     @commands.slash_command(name="lockdown", description="Lock a channel")
     @commands.has_permissions(manage_channels=True)
@@ -303,11 +302,13 @@ class StaffCommands(commands.Cog):
         self,
         ctx : discord.ApplicationContext,
     ):
+        logs = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
         await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
         embed = discord.Embed(title="Channel Locked", description="This Channel has been locked, please be patient while we fix any issues.", color=discord.Color.yellow())
         embed.set_footer(text="Klair Staff.")
         await ctx.send(embed=embed)
         await ctx.send_response("Channel has been locked !", ephemeral=True)
+        await logs.send(f"{ctx.user.display_name} locked {ctx.channel.mention}")
 
     @commands.slash_command(name="unlockdown", description="Unlock a channel")
     @commands.has_permissions(manage_channels=True)
@@ -315,11 +316,13 @@ class StaffCommands(commands.Cog):
         self,
         ctx : discord.ApplicationContext,
     ):
+        logs = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
         await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
         embed = discord.Embed(title="Channel Unlocked", description="This Channel has been unlocked.", color=discord.Color.green())
         embed.set_footer(text="Klair Staff.")
         await ctx.send(embed=embed)
         await ctx.send_response("Channel has been unlocked !", ephemeral=True)
+        await logs.send(f"{ctx.user.display_name} unlocked {ctx.channel.mention}")
 
 
     #=================================
@@ -419,6 +422,42 @@ class StaffCommands(commands.Cog):
 
     @dm_embed.error
     async def purge_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
+    
+    @ban.error
+    async def info_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
+
+    @unban.error
+    async def info_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
+
+    @lockdown.error
+    async def info_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+        errorcode = randint(10000, 99999)
+        embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
+        embed.add_field(name="Error", value=f"```\n{error}\n```")
+        embed.set_footer(text=f"error #{errorcode}", icon_url="https://asicalug.netlify.app/storage/warning.png")
+        if isinstance(error, commands.errors.MissingPermissions):
+            await ctx.send_response(embed=embed, ephemeral=True)
+
+    @unlockdown.error
+    async def info_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
         errorcode = randint(10000, 99999)
         embed = discord.Embed(title="An Error occured", description="Please screenshot the Error Message and report it to a Staff Member", color=discord.Color.red())
         embed.add_field(name="Error", value=f"```\n{error}\n```")
