@@ -316,7 +316,7 @@ class StaffCommands(commands.Cog):
         ctx : discord.ApplicationContext,
     ):
         await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
-        embed = discord.Embed(title="Channel Unlocked", description="This Channel has been unlocked.", color=discord.Color.yellow())
+        embed = discord.Embed(title="Channel Unlocked", description="This Channel has been unlocked.", color=discord.Color.green())
         embed.set_footer(text="Klair Staff.")
         await ctx.send(embed=embed)
         await ctx.send_response("Channel has been unlocked !", ephemeral=True)
