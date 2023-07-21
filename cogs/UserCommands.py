@@ -55,6 +55,29 @@ class UserCommands(commands.Cog):
         await ctx.send_response(embed=embed, ephemeral=True)
         channel = self.bot.get_channel(self.bot.settings.get("Logs.Channel"))
         await channel.send(f"<@{ctx.user.id}> unlinked their account ({username})")
+
+    @commands.slash_command()
+    async def userinfo(
+        self,
+        ctx: discord.ApplicationContext,
+        member : Option(discord.Member)
+    ):
+        link = self.bot.settings.get(f"Link.Username.{member.id}")
+        uuid = api.get_uuid(f"{link}")
+        join = member.joined_at.strftime("%A, %B %d %Y @ %H:%M:%S %p")
+        creation = member.created_at.strftime("%A, %B %d %Y @ %H:%M:%S %p")
+        warns = self.bot.settings.get(f"Warns.{member.id}")
+        embed = discord.Embed(title="User Info")
+        embed.set_author(name=member.display_name)
+        embed.add_field(name="Linked With", value=f"{link}", inline=False)
+        embed.set_thumbnail(url=f"https://visage.surgeplay.com/bust/128/{uuid}")
+        embed.add_field(name="Joined At", value=f"`{join}`", inline=False)
+        embed.add_field(name="Created at", value=f"`{creation}`", inline=False)
+        if warns==None:
+            embed.add_field(name="Warns", value="`0`")
+        if warns!=None:
+            embed.add_field(name="Warns", value=f"`{warns}`")
+        await ctx.send_response(embed=embed, ephemeral=True)
     
 def setup(bot: commands.Bot):
     bot.add_cog(UserCommands(bot))

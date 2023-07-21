@@ -297,7 +297,31 @@ class StaffCommands(commands.Cog):
         await ctx.response.send_message(f"{member.mention}> has been unbanned.", ephemeral=True)
         await logs.send(f"{ctx.user.mention} has unbanned {member.mention}.")
 
-    
+    @commands.slash_command(name="lockdown", description="Lock a channel")
+    @commands.has_permissions(manage_channels=True)
+    async def lockdown(
+        self,
+        ctx : discord.ApplicationContext,
+    ):
+        await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
+        embed = discord.Embed(title="Channel Locked", description="This Channel has been locked, please be patient while we fix any issues.", color=discord.Color.yellow())
+        embed.set_footer(text="Klair Staff.")
+        await ctx.send(embed=embed)
+        await ctx.send_response("Channel has been locked !", ephemeral=True)
+
+    @commands.slash_command(name="unlockdown", description="Unlock a channel")
+    @commands.has_permissions(manage_channels=True)
+    async def unlockdown(
+        self,
+        ctx : discord.ApplicationContext,
+    ):
+        await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
+        embed = discord.Embed(title="Channel Unlocked", description="This Channel has been unlocked.", color=discord.Color.yellow())
+        embed.set_footer(text="Klair Staff.")
+        await ctx.send(embed=embed)
+        await ctx.send_response("Channel has been unlocked !", ephemeral=True)
+
+
     #=================================
     #============Errors===============
     #================================= 
