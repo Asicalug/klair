@@ -78,6 +78,26 @@ class UserCommands(commands.Cog):
         if warns!=None:
             embed.add_field(name="Warns", value=f"`{warns}`")
         await ctx.send_response(embed=embed, ephemeral=True)
+
+    @commands.slash_command()
+    async def serverinfo(
+        self,
+        ctx: discord.ApplicationContext
+    ):
+        creation = ctx.guild.created_at.strftime("%A, %B %d %Y @ %H:%M:%S %p")
+        member_count = ctx.guild.member_count
+        roles = [role.mention for role in ctx.guild.roles]
+        txt_channels = [channel.mention for channel in ctx.guild.text_channels]
+        vc_channels = [channel.mention for channel in ctx.guild.voice_channels]
+        categories = [channel.mention for channel in ctx.guild.categories]
+        embed = discord.Embed(title=f"ServerInfo ({ctx.guild.name})", description=f"")
+        embed.add_field(name="Created at", value=f"{creation}", inline=False)
+        embed.add_field(name="Member Count", value=f"{member_count}", inline=False)
+        embed.add_field(name="Roles", value=f"{roles}", inline=False)
+        embed2 = discord.Embed(title="Text Channels", description=f"{txt_channels}")
+        embed2.add_field(name="Voice Channels", value=f"{vc_channels}", inline=False)
+        embed2.add_field(name="Categories", value=f"{categories}", inline=False)
+        await ctx.send_response(embeds=[embed, embed2], ephemeral=True)
     
 def setup(bot: commands.Bot):
     bot.add_cog(UserCommands(bot))
