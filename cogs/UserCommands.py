@@ -66,6 +66,7 @@ class UserCommands(commands.Cog):
         uuid = api.get_uuid(f"{link}")
         join = member.joined_at.strftime("%A, %B %d %Y @ %H:%M:%S %p")
         creation = member.created_at.strftime("%A, %B %d %Y @ %H:%M:%S %p")
+        discord.Member.display_name
         warns = self.bot.settings.get(f"Warns.{member.id}")
         embed = discord.Embed(title="User Info")
         embed.set_author(name=member.display_name)
